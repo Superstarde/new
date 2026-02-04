@@ -1,454 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My K-Drama Star 🌸</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Gaegu:wght@400;700&family=Noto+Serif+KR:wght@300;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --pink-light: #ffd1dc;
-            --pink-dark: #ff9eb5;
-            --red-love: #e04462;
-            --bg-color: #fff0f3;
-            --text-color: #5c3a42;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Our K-Drama Story</title>
 
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            font-family: 'Noto Serif KR', serif;
-            overflow-x: hidden;
-            color: var(--text-color);
-        }
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@500;700&family=Noto+Serif+KR:wght@300;600&display=swap" rel="stylesheet">
 
-        /* --- 1. THE OPENING SCENE (ENVELOPE) --- */
-        #intro-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle, #ffe6eb 0%, #ffc0cb 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: opacity 1.5s ease-out;
-        }
+<style>
+:root{
+  --pink:#f7c6d0;
+  --rose:#e96a88;
+  --dark:#0f0a0b;
+  --glass:rgba(255,255,255,0.22);
+}
 
-        .envelope-container {
-            position: relative;
-            cursor: pointer;
-            animation: float 3s ease-in-out infinite;
-        }
+*{box-sizing:border-box;margin:0;padding:0}
 
-        .envelope {
-            width: 300px;
-            height: 200px;
-            background: #ff6b81;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
+body{
+  font-family:'Noto Serif KR',serif;
+  background:#000;
+  color:#fff;
+  overflow-x:hidden;
+}
 
-        .envelope:hover {
-            transform: scale(1.05);
-        }
+/* ===== HERO ===== */
+.hero{
+  position:relative;
+  height:100vh;
+  background:url("assets/images/fuji-bg.jpg") center/cover no-repeat;
+}
 
-        .flap {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 120px solid #ff85a2; /* Lighter pink */
-            transform-origin: top;
-            transition: transform 0.6s 0.2s;
-            z-index: 3;
-        }
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.35),rgba(0,0,0,.85));
+}
 
-        .envelope.open .flap {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
+.hero-content{
+  position:relative;
+  z-index:3;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+}
 
-        .seal {
-            position: absolute;
-            top: 40px;
-            z-index: 4;
-            font-size: 40px;
-            background: white;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+.hero h1{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(2.4rem,6vw,4rem);
+  color:var(--pink);
+}
 
-        .letter-preview {
-            position: absolute;
-            width: 280px;
-            height: 180px;
-            background: white;
-            top: 10px;
-            transition: transform 0.6s 0.6s;
-            z-index: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Dancing Script', cursive;
-            font-size: 24px;
-            color: var(--red-love);
-        }
+.hero p{
+  max-width:520px;
+  font-size:1rem;
+  opacity:.9;
+}
 
-        .envelope.open .letter-preview {
-            transform: translateY(-100px);
-        }
+/* ===== SAKURA TREE ===== */
+.sakura-tree{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(340px,80vw);
+  z-index:4;
+  animation:rise 2.6s ease forwards;
+}
 
-        .tap-text {
-            position: absolute;
-            bottom: -50px;
-            width: 100%;
-            text-align: center;
-            font-family: 'Gaegu', cursive;
-            font-size: 1.5rem;
-            color: var(--red-love);
-            animation: pulse 1.5s infinite;
-        }
+@keyframes rise{
+  from{opacity:0;transform:translate(-50%,60px)}
+  to{opacity:1;transform:translate(-50%,0)}
+}
 
-        /* --- 2. MAIN CONTENT --- */
-        #main-content {
-            display: none; /* Hidden until clicked */
-            opacity: 0;
-            transition: opacity 2s ease-in;
-            position: relative;
-            z-index: 10;
-            padding-bottom: 100px;
-        }
+/* ===== SECTIONS ===== */
+.section{
+  padding:80px 20px;
+  background:var(--dark);
+}
 
-        /* Falling Cherry Blossoms Canvas */
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 1;
-        }
+.title{
+  text-align:center;
+  font-family:'Playfair Display',serif;
+  font-size:2.2rem;
+  color:var(--pink);
+  margin-bottom:40px;
+}
 
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            position: relative;
-        }
+/* ===== SLIDER ===== */
+.slider{
+  display:flex;
+  gap:20px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  padding-bottom:10px;
+}
 
-        h1 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 4rem;
-            color: var(--red-love);
-            margin: 0;
-            text-shadow: 2px 2px 4px white;
-        }
+.slide{
+  min-width:80%;
+  scroll-snap-align:center;
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:22px;
+  padding:18px;
+}
 
-        h2 {
-            font-family: 'Gaegu', cursive;
-            font-size: 2rem;
-            color: #555;
-            margin-top: 10px;
-        }
+.slide img,
+.slide video{
+  width:100%;
+  height:300px;
+  object-fit:cover;
+  border-radius:16px;
+}
 
-        /* Floating K-Elements */
-        .k-element {
-            position: absolute;
-            font-size: 3rem;
-            opacity: 0.8;
-            animation: floatAround 15s infinite linear;
-            z-index: -1;
-        }
+/* ===== LETTER ===== */
+.letter{
+  max-width:620px;
+  margin:auto;
+  background:#fff;
+  color:#333;
+  padding:34px;
+  border-radius:22px;
+  font-family:'Dancing Script',cursive;
+  font-size:1.45rem;
+  line-height:1.5;
+}
 
-        /* --- MEMORY GALLERY --- */
-        .gallery-section {
-            padding: 50px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+/* ===== FOOTER ===== */
+footer{
+  padding:40px 20px;
+  text-align:center;
+  font-size:.9rem;
+  opacity:.7;
+}
 
-        .section-title {
-            text-align: center;
-            font-family: 'Dancing Script', cursive;
-            font-size: 3rem;
-            margin-bottom: 40px;
-            color: var(--red-love);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: rotate(-2deg);
-            transition: transform 0.3s;
-        }
-
-        .card:nth-child(even) {
-            transform: rotate(2deg);
-        }
-
-        .card:hover {
-            transform: scale(1.05) rotate(0deg);
-            z-index: 10;
-        }
-
-        .card img, .card video {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 5px;
-        }
-
-        /* --- LOVE LETTER --- */
-        .letter-section {
-            margin-top: 80px;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .paper {
-            background: #fff;
-            width: 100%;
-            max-width: 600px;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            position: relative;
-            background-image: linear-gradient(#f1f1f1 1px, transparent 1px);
-            background-size: 100% 1.5em;
-            line-height: 1.5em;
-        }
-
-        .paper p {
-            font-family: 'Gaegu', cursive;
-            font-size: 1.5rem;
-            color: #333;
-        }
-
-        /* --- ANIMATIONS --- */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-
-        @keyframes floatAround {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(100px, 50px) rotate(90deg); }
-            50% { transform: translate(0, 100px) rotate(180deg); }
-            75% { transform: translate(-100px, 50px) rotate(270deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
-        }
-
-    </style>
+/* ===== CANVAS ===== */
+#sakuraCanvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:5;
+}
+</style>
 </head>
+
 <body>
 
-    <audio id="bg-music" loop>
-        <source src="music/song.mp3" type="audio/mpeg">
-    </audio>
+<!-- BACKGROUND MUSIC -->
+<audio autoplay loop>
+  <source src="assets/audio/romantic-kdrama.mp3" type="audio/mpeg">
+</audio>
 
-    <div id="intro-screen">
-        <div class="envelope-container" onclick="openGift()">
-            <div class="envelope" id="envelope">
-                <div class="front"></div>
-                <div class="letter-preview">Happy Valentine's ❤️</div>
-                <div class="flap"></div>
-                <div class="seal">🫰</div>
-            </div>
-            <div class="tap-text">Tap to Open for My Sarang</div>
-        </div>
+<!-- PETAL CANVAS -->
+<canvas id="sakuraCanvas"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Saranghae, My Love</h1>
+    <p>A quiet story written between cherry blossoms, Seoul nights, and forever.</p>
+  </div>
+  <img src="assets/images/sakura-tree.png" class="sakura-tree" alt="Cherry Blossom Tree">
+</section>
+
+<!-- EPISODES -->
+<section class="section">
+  <div class="title">Our Episodes</div>
+  <div class="slider">
+    <div class="slide"><img src="assets/images/gallery1.jpg"></div>
+    <div class="slide"><img src="assets/images/gallery2.jpg"></div>
+    <div class="slide"><img src="assets/images/gallery3.jpg"></div>
+    <div class="slide"><img src="assets/images/gallery4.jpg"></div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="section">
+  <div class="title">Moments in Motion</div>
+  <div class="slider">
+    <div class="slide">
+      <video controls poster="assets/images/video-cover.jpg">
+        <source src="assets/video/memories.mp4" type="video/mp4">
+      </video>
     </div>
+  </div>
+</section>
 
-    <div id="main-content">
-        <canvas id="blossomCanvas"></canvas>
+<!-- LETTER -->
+<section class="section">
+  <div class="title">My Letter</div>
+  <div class="letter">
+    My love,<br><br>
+    You are my calm episode, my favorite scene, my forever season.
+    If love were a drama, I would choose us — every lifetime.<br><br>
+    Always yours.
+  </div>
+</section>
 
-        <section class="hero">
-            <h1>Saranghae, My Love</h1>
-            <h2>Welcome to our K-Drama Story</h2>
-            
-            <div class="k-element" style="top: 10%; left: 10%;">🍜</div>
-            <div class="k-element" style="top: 20%; right: 15%;">🥢</div>
-            <div class="k-element" style="bottom: 15%; left: 20%;">🍶</div>
-            <div class="k-element" style="bottom: 30%; right: 10%;">🌸</div>
-        </section>
+<footer>
+  A timeless love · A quiet forever
+</footer>
 
-        <section class="gallery-section">
-            <div class="section-title">Our Episodes</div>
-            <div class="grid">
-                <div class="card"><img src="images/img1.jpg" alt="Memory 1"></div>
-                <div class="card"><img src="images/img2.jpg" alt="Memory 2"></div>
-                <div class="card"><img src="images/img3.jpg" alt="Memory 3"></div>
-                <div class="card"><img src="images/img4.jpg" alt="Memory 4"></div>
-                
-                <div class="card">
-                    <video controls>
-                        <source src="images/vid1.mp4" type="video/mp4">
-                    </video>
-                </div>
+<!-- ===== 3D SAKURA PETALS SCRIPT ===== -->
+<script>
+const canvas=document.getElementById("sakuraCanvas");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-                <div class="card"><img src="images/img5.jpg" alt="Memory 5"></div>
-                <div class="card"><img src="images/img6.jpg" alt="Memory 6"></div>
-                
-                <div class="card">
-                    <video controls>
-                        <source src="images/vid2.mp4" type="video/mp4">
-                    </video>
-                </div>
-                
-                <div class="card"><img src="images/img7.jpg" alt="Memory 7"></div>
-                <div class="card"><img src="images/img8.jpg" alt="Memory 8"></div>
-            </div>
-        </section>
+const petalImg=new Image();
+petalImg.src="assets/images/sakura-petal.png";
 
-        <section class="letter-section">
-            <div class="paper">
-                <div class="section-title" style="font-size: 2rem;">My Letter to You</div>
-                <p>
-                    Dearest [Her Name],<br><br>
-                    Just like a scene from your favorite K-drama, every moment with you feels magical. You are the blooming cherry blossom in my spring and the warm noodle soup in my winter.<br><br>
-                    Thank you for being my leading lady. I promise to be the oppa who always stands by your side.<br><br>
-                    Happy Valentine's Day!<br><br>
-                    Love always,<br>
-                    [Your Name]
-                </p>
-            </div>
-        </section>
-    </div>
+const petals=[];
+const COUNT=window.innerWidth<768?30:60;
 
-    <script>
-        // --- LOGIC TO OPEN ENVELOPE & PLAY MUSIC ---
-        function openGift() {
-            const envelope = document.getElementById('envelope');
-            const introScreen = document.getElementById('intro-screen');
-            const mainContent = document.getElementById('main-content');
-            const music = document.getElementById('bg-music');
+class Petal{
+  constructor(){
+    this.x=Math.random()*canvas.width;
+    this.y=Math.random()*canvas.height-canvas.height;
+    this.size=Math.random()*18+14;
+    this.speedY=Math.random()*0.9+0.4;
+    this.rotation=Math.random()*360;
+    this.rotationSpeed=Math.random()*1.2-0.6;
+    this.swing=Math.random()*0.02+0.01;
+  }
+  update(){
+    this.y+=this.speedY;
+    this.x+=Math.sin(this.y*this.swing);
+    this.rotation+=this.rotationSpeed;
+    if(this.y>canvas.height){
+      this.y=-40;
+      this.x=Math.random()*canvas.width;
+    }
+  }
+  draw(){
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.rotation*Math.PI/180);
+    ctx.drawImage(petalImg,-this.size/2,-this.size/2,this.size,this.size);
+    ctx.restore();
+  }
+}
 
-            // 1. Animate Envelope
-            envelope.classList.add('open');
+petalImg.onload=()=>{
+  for(let i=0;i<COUNT;i++)petals.push(new Petal());
+  animate();
+};
 
-            // 2. Play Music (Browsers allow audio after user interaction)
-            music.volume = 0.5;
-            music.play().catch(error => console.log("Audio play failed: ", error));
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  petals.forEach(p=>{p.update();p.draw();});
+  requestAnimationFrame(animate);
+}
 
-            // 3. Transition to Main Content
-            setTimeout(() => {
-                introScreen.style.opacity = '0';
-                setTimeout(() => {
-                    introScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    // Trigger fade in
-                    setTimeout(() => {
-                        mainContent.style.opacity = '1';
-                        initBlossoms(); // Start the rain
-                    }, 50);
-                }, 1500);
-            }, 1000);
-        }
+window.addEventListener("resize",()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
+</script>
 
-        // --- CHERRY BLOSSOM CANVAS ANIMATION ---
-        function initBlossoms() {
-            const canvas = document.getElementById('blossomCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const petals = [];
-            const petalCount = 100;
-
-            class Petal {
-                constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height - canvas.height;
-                    this.size = Math.random() * 15 + 10;
-                    this.speedY = Math.random() * 1 + 0.5;
-                    this.speedX = Math.random() * 2 - 1;
-                    this.rotation = Math.random() * 360;
-                    this.rotationSpeed = Math.random() * 2 - 1;
-                    // Pink color variations
-                    const colors = ['#ffd1dc', '#ff9eb5', '#ffb7c5'];
-                    this.color = colors[Math.floor(Math.random() * colors.length)];
-                }
-
-                update() {
-                    this.y += this.speedY;
-                    this.x += this.speedX;
-                    this.rotation += this.rotationSpeed;
-
-                    if (this.y > canvas.height) {
-                        this.y = -20;
-                        this.x = Math.random() * canvas.width;
-                    }
-                }
-
-                draw() {
-                    ctx.save();
-                    ctx.translate(this.x, this.y);
-                    ctx.rotate(this.rotation * Math.PI / 180);
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    // Draw a petal shape
-                    ctx.moveTo(0, 0);
-                    ctx.bezierCurveTo(10, -10, 20, 0, 0, 20);
-                    ctx.bezierCurveTo(-20, 0, -10, -10, 0, 0);
-                    ctx.fill();
-                    ctx.restore();
-                }
-            }
-
-            for (let i = 0; i < petalCount; i++) {
-                petals.push(new Petal());
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                petals.forEach(petal => {
-                    petal.update();
-                    petal.draw();
-                });
-                requestAnimationFrame(animate);
-            }
-
-            animate();
-
-            // Handle Resize
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
-        }
-    </script>
 </body>
 </html>
+
