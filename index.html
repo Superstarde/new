@@ -11,50 +11,71 @@
     <style>
         /* --- CORE SETTINGS --- */
         :root {
-            --primary: #be185d;
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.25);
         }
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #000;
+            background-color: #090a0f; /* Very dark fallback */
             color: #fff;
-            overflow: hidden; /* Prevent scrolling, we handle it manually */
-            margin: 0;
-            padding: 0;
+            overflow: hidden;
+            margin: 0; padding: 0;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- BACKGROUND --- */
-        .bg-gradient-anim {
+        /* --- NIGHT SKY BACKGROUND --- */
+        .night-bg {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(-45deg, #2e1065, #be185d, #831843, #0f172a);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            z-index: -2;
-        }
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            /* Deep radial gradient for night sky */
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            z-index: -10;
         }
 
-        /* --- FLOATING PARTICLES --- */
-        .particle {
+        /* --- TWINKLING STARS --- */
+        #star-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -5; pointer-events: none;
+        }
+        .star {
             position: absolute;
-            background: rgba(255,255,255,0.5);
+            background: #fff;
             border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
+            /* Base twinkle animation - individualized in JS */
+            animation: twinkle 3s infinite ease-in-out alternate;
+        }
+        /* Keyframes for shining effect */
+        @keyframes twinkle {
+            0% { opacity: 0.2; box-shadow: 0 0 2px #fff; transform: scale(0.8); }
+            100% { opacity: 1; box-shadow: 0 0 8px #fff, 0 0 12px #a5b4fc; transform: scale(1); }
+        }
+
+        /* --- SHOOTING STARS --- */
+        .shooting-star {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #fff;
+            border-radius: 50%;
+            /* Glowing head */
+            box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #6366f1;
+            z-index: -4;
+            opacity: 0; /* Hidden initially */
+        }
+        /* The tail of the shooting star */
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%; right: 1px;
+            transform: translateY(-50%);
+            width: 200px; height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0.8), transparent);
         }
 
         /* --- SECTIONS (SCREENS) --- */
         .screen {
             position: absolute;
             top: 0; left: 0;
-            width: 100%;
-            height: 100dvh; /* Mobile friendly height */
+            width: 100%; height: 100dvh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -64,149 +85,82 @@
             transition: opacity 0.8s ease;
             padding: 20px;
             box-sizing: border-box;
+            z-index: 1;
         }
         .screen.active {
-            opacity: 1;
-            pointer-events: auto;
-            z-index: 10;
+            opacity: 1; pointer-events: auto; z-index: 10;
         }
 
-        /* --- GLASS CARDS --- */
+        /* --- GLASS CARDS (Adjusted for dark BG) --- */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         /* --- TYPOGRAPHY --- */
         .font-hand { font-family: 'Dancing Script', cursive; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        /* Adjusted text colors for better contrast against dark sky */
+        .text-accent { color: #f9a8d4; } /* Light Pink */
+        .text-highlight { color: #e0f2fe; } /* Very pale blue/white */
 
         /* --- PHOTO CAROUSEL (STACKED) --- */
         .photo-stack {
             position: relative;
-            width: 280px;
-            height: 400px;
+            width: 280px; height: 400px;
             margin-top: 20px;
         }
         .photo-card {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             border-radius: 20px;
-            background-size: cover;
-            background-position: center;
-            border: 4px solid #fff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            background-size: cover; background-position: center;
+            border: 3px solid #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s;
-            display: flex;
-            align-items: flex-end;
-            overflow: hidden;
+            display: flex; align-items: flex-end; overflow: hidden;
         }
         .photo-caption {
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: white;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-            font-size: 14px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: white; width: 100%; padding: 20px; text-align: center; font-size: 14px;
         }
 
         /* --- REASONS CARDS --- */
         .reason-card {
-            background: white;
+            background: rgba(255,255,255,0.95);
             color: #be185d;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            width: 85%;
-            max-width: 350px;
-            transform: scale(0.9);
-            opacity: 0;
-            position: absolute;
+            padding: 30px; border-radius: 20px; text-align: center;
+            width: 85%; max-width: 350px;
+            transform: scale(0.9); opacity: 0; position: absolute;
             transition: all 0.5s ease;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
-        .reason-card.current {
-            transform: scale(1);
-            opacity: 1;
-            z-index: 2;
-        }
-        .reason-card.next {
-            transform: scale(0.95) translateY(10px);
-            opacity: 0.6;
-            z-index: 1;
-        }
+        .reason-card.current { transform: scale(1); opacity: 1; z-index: 2; }
+        .reason-card.next { transform: scale(0.95) translateY(10px); opacity: 0.6; z-index: 1; }
 
-        /* --- ENVELOPE (OPTIMIZED) --- */
-        .envelope-container {
-            perspective: 1000px;
-            width: 300px;
-            height: 200px;
-            cursor: pointer;
-        }
-        .envelope-body {
-            position: relative;
-            width: 100%; height: 100%;
-            background: #e11d48;
-            border-radius: 0 0 10px 10px;
-            z-index: 10;
-        }
-        .flap {
-            position: absolute;
-            top: 0; left: 0; width: 0; height: 0;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 110px solid #fb7185;
-            transform-origin: top;
-            transition: transform 0.6s ease;
-            z-index: 11;
-        }
-        .envelope-container.open .flap {
-            transform: rotateX(180deg);
-            z-index: 1;
-        }
-        .letter-paper {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            width: 90%;
-            height: 85dvh;
-            background: #ffffff;
-            color: #333;
-            padding: 25px;
-            border-radius: 5px;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            z-index: 100;
-            overflow-y: auto;
-            opacity: 0;
-            transition: all 0.8s ease;
-        }
-        .letter-paper.visible {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-        }
+        /* --- ENVELOPE --- */
+        .envelope-container { perspective: 1000px; width: 300px; height: 200px; cursor: pointer; }
+        .envelope-body { position: relative; width: 100%; height: 100%; background: #be185d; border-radius: 0 0 10px 10px; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 150px solid transparent; border-right: 150px solid transparent; border-top: 110px solid #db2777; transform-origin: top; transition: transform 0.6s ease; z-index: 11; }
+        .envelope-container.open .flap { transform: rotateX(180deg); z-index: 1; }
+        .letter-paper { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 90%; height: 85dvh; background: #fffdf7; color: #333; padding: 25px; border-radius: 5px; box-shadow: 0 0 60px rgba(0,0,0,0.8); z-index: 100; overflow-y: auto; opacity: 0; transition: all 0.8s ease; }
+        .letter-paper.visible { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         
         /* --- UTILS --- */
-        .btn-pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(236, 72, 153, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
-        }
+        .btn-pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(249, 168, 212, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(249, 168, 212, 0); } 100% { box-shadow: 0 0 0 0 rgba(249, 168, 212, 0); } }
     </style>
 </head>
 <body>
 
-    <div class="bg-gradient-anim"></div>
-    <div id="particle-container"></div>
+    <div class="night-bg"></div>
+    <div id="star-container"></div>
 
-    <button onclick="toggleMusic()" id="music-btn" class="fixed top-4 right-4 z-50 bg-white/10 backdrop-blur-md p-3 rounded-full text-xl border border-white/20">
+    <button onclick="toggleMusic()" id="music-btn" class="fixed top-4 right-4 z-50 bg-white/10 backdrop-blur-md p-3 rounded-full text-xl border border-white/20 shadow-lg">
         🔇
     </button>
     <audio id="bgMusic" loop>
@@ -215,73 +169,73 @@
 
     <div id="screen-1" class="screen active text-center">
         <div class="glass-panel p-8 md:p-12 flex flex-col items-center">
-            <h1 class="font-hand text-6xl text-pink-300 mb-2 drop-shadow-lg">Hey Amna</h1>
-            <p class="text-pink-100 text-lg mb-8 font-light tracking-wide">I made something for you...</p>
+            <h1 class="font-hand text-6xl text-accent mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">Hey Amna</h1>
+            <p class="text-highlight text-lg mb-8 font-light tracking-wide">Look at the stars tonight...</p>
             
-            <button onclick="nextScreen(2)" class="w-20 h-20 bg-pink-600 rounded-full flex items-center justify-center text-3xl shadow-lg btn-pulse border-4 border-pink-400/50 transition active:scale-95">
-                💌
+            <button onclick="nextScreen(2)" class="w-20 h-20 bg-pink-600/80 rounded-full flex items-center justify-center text-3xl shadow-xl btn-pulse border-4 border-pink-300/30 transition active:scale-95 backdrop-blur-sm">
+                ✨
             </button>
         </div>
     </div>
 
     <div id="screen-2" class="screen text-center">
-        <h2 class="font-hand text-5xl md:text-7xl mb-6 text-pink-200 leading-tight" id="wish-text">
+        <h2 class="font-hand text-5xl md:text-7xl mb-6 text-accent leading-tight drop-shadow-lg" id="wish-text">
             Happy <br> Valentine's <br> Day 🌹
         </h2>
-        <p class="font-serif italic text-xl text-pink-100/80 max-w-md px-6">
-            "In a world full of temporary things, you are a perpetual feeling."
+        <p class="font-serif italic text-xl text-highlight/90 max-w-md px-6 drop-shadow-md">
+            "You shine brighter than all the stars in this sky combined."
         </p>
         
         <div class="absolute bottom-12 w-full flex justify-center">
-            <button onclick="nextScreen(3)" class="glass-panel px-8 py-3 text-pink-100 hover:bg-white/10 transition flex items-center gap-2">
+            <button onclick="nextScreen(3)" class="glass-panel px-8 py-3 text-highlight hover:bg-white/10 transition flex items-center gap-2">
                 Our Memories <span>→</span>
             </button>
         </div>
     </div>
 
     <div id="screen-3" class="screen overflow-hidden">
-        <h3 class="font-hand text-4xl mb-4 text-pink-200">Us ❤️</h3>
+        <h3 class="font-hand text-4xl mb-4 text-accent drop-shadow-lg">Us Under The Stars ❤️</h3>
         
         <div class="photo-stack" id="photo-stack">
             </div>
 
-        <p class="mt-8 text-sm text-pink-200/60 animate-bounce">Tap photo for next</p>
+        <p class="mt-8 text-sm text-highlight/70 animate-bounce">Tap photo for next</p>
 
         <div class="absolute bottom-12 w-full flex justify-center">
-            <button onclick="nextScreen(4)" class="glass-panel px-8 py-3 text-pink-100 hover:bg-white/10 transition">
+            <button onclick="nextScreen(4)" class="glass-panel px-8 py-3 text-highlight hover:bg-white/10 transition">
                 Why I Love You →
             </button>
         </div>
     </div>
 
     <div id="screen-4" class="screen">
-        <h3 class="font-hand text-4xl mb-8 text-pink-200">Why You?</h3>
+        <h3 class="font-hand text-4xl mb-8 text-accent drop-shadow-lg">Why You?</h3>
         
         <div class="relative w-full h-64 flex justify-center items-center" id="reasons-container">
             </div>
 
-        <button onclick="cycleReasons()" class="mt-8 text-pink-300 border-b border-pink-300/50 pb-1 text-sm">
+        <button onclick="cycleReasons()" class="glass-panel mt-8 px-6 py-2 text-highlight text-sm flex gap-2 items-center">
             Next Reason ↻
         </button>
 
         <div class="absolute bottom-12 w-full flex justify-center">
-            <button onclick="nextScreen(5)" class="glass-panel px-8 py-3 text-pink-100 hover:bg-white/10 transition">
+            <button onclick="nextScreen(5)" class="glass-panel px-8 py-3 text-highlight hover:bg-white/10 transition">
                 Open Letter 💌
             </button>
         </div>
     </div>
 
     <div id="screen-5" class="screen">
-        <h3 class="font-hand text-3xl mb-8 text-pink-200 animate-pulse">For You...</h3>
+        <h3 class="font-hand text-3xl mb-8 text-accent animate-pulse drop-shadow-lg">A Message For You...</h3>
         
         <div class="envelope-container" onclick="openLetter()">
             <div class="envelope-body flex items-center justify-center">
-                <span class="text-4xl">❤️</span>
+                <span class="text-4xl filter drop-shadow">❤️</span>
             </div>
             <div class="flap"></div>
         </div>
 
-        <p class="mt-6 text-sm text-pink-200/70">Tap to open</p>
+        <p class="mt-6 text-sm text-highlight/70">Tap to open</p>
     </div>
 
     <div id="full-letter" class="letter-paper font-serif leading-relaxed text-gray-800">
@@ -289,26 +243,26 @@
         
         <div class="text-center mb-6">
             <div class="inline-block px-4 py-1 border-b-2 border-pink-400 text-pink-600 font-bold uppercase tracking-widest text-xs">
-                Love Letter
+                Starry Night Letter
             </div>
         </div>
 
         <h2 class="font-hand text-4xl text-center text-rose-600 mb-6">My Dearest Amna,</h2>
 
         <p class="mb-4">
-            Today isn't just about Valentine's Day; it's about celebrating the fact that you exist and that I am lucky enough to know you.
+            Tonight, I wanted to give you the stars, because that's what you remind me of.
         </p>
         <p class="mb-4">
-            You are the calm in my chaos and the spark in my routine. Every time I see your name pop up on my phone, I smile like an idiot. Every time we meet, my worries disappear.
+            Just like the night sky, my life was a bit dark until you showed up and started shining. You are the calm in my chaos and the spark in my routine.
         </p>
-        <p class="mb-4 text-rose-600 font-semibold italic border-l-4 border-rose-300 pl-4">
+        <p class="mb-4 text-rose-600 font-semibold italic border-l-4 border-rose-300 pl-4 bg-rose-50 p-2 rounded-r">
             "Tum meri wo khwahish ho jo har dua mein shamil hai."
         </p>
         <p class="mb-4">
-            I promise to always support your dreams, to listen to your rants, to bring you food when you're hangry, and to love you even when you're being stubborn.
+            I promise to always support your dreams, to listen to your rants, and to love you even when you're being stubborn. You are my favorite wish upon a shooting star come true.
         </p>
         <p class="mb-6">
-            Thank you for being my partner, my best friend, and my queen.
+            Thank you for being my partner, my best friend, and my Queen.
         </p>
 
         <div class="text-right mt-8">
@@ -317,30 +271,101 @@
         </div>
 
         <div class="mt-10 text-center">
-            <button onclick="location.reload()" class="px-6 py-2 bg-rose-100 text-rose-600 rounded-full text-sm font-bold">
-                Read Again ↻
+            <button onclick="location.reload()" class="px-6 py-2 bg-gray-100 text-rose-600 rounded-full text-sm font-bold">
+                Restart Journey ↻
             </button>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        // Add more photos here. It handles any aspect ratio cleanly.
+        // --- DATA CONFIGURATION ---
         const photos = [
-            { src: "pic1.png", caption: "The day we met ❤️" },
-            { src: "pic2.jpg", caption: "You look beautiful here ✨" },
-            { src: "pic3.png", caption: "Crazy times! 🤪" },
-            { src: "pic4.jpg", caption: "My favorite view 😍" },
-            { src: "pic5.png", caption: "Partners in crime 🕵️‍♀️" }
+            { src: "pic1.png", caption: "The day our stars aligned ✨" },
+            { src: "pic2.jpg", caption: "Shining bright, as always 💖" },
+            { src: "pic3.png", caption: "Adventures with you 🌌" },
+            { src: "pic4.jpg", caption: "My favorite view in the universe 😍" },
+            { src: "pic5.png", caption: "Partners in crime and everything else 🕵️‍♀️" }
         ];
 
         const reasons = [
-            "Your smile literally lights up the room.",
-            "You have the kindest heart I know.",
-            "You make even boring days feel like an adventure.",
+            "Your smile is brighter than any star in the sky.",
+            "You have the kindest heart in the whole galaxy.",
+            "You make even boring days feel magical.",
             "The way you look at me makes me feel invincible.",
-            "You understand me without me saying a word."
+            "You are my dream come true."
         ];
+
+        // --- STARRY NIGHT GENERATION ---
+        function createNightSky() {
+            const container = document.getElementById('star-container');
+            const numStars = 150; // Number of static/twinkling stars
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                // Random size between 1px and 3px
+                const size = Math.random() * 2 + 1;
+                
+                Object.assign(star.style, {
+                    width: `${size}px`,
+                    height: `${size}px`,
+                    top: `${Math.random() * 100}vh`,
+                    left: `${Math.random() * 100}vw`,
+                    // Randomize twinkling speed and delay so they don't pulse together
+                    animationDuration: `${Math.random() * 3 + 2}s`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    // Some stars are dimmer
+                    opacity: Math.random() * 0.5 + 0.3
+                });
+                container.appendChild(star);
+            }
+        }
+
+        // --- SHOOTING STAR MECHANISM ---
+        function spawnShootingStar() {
+            const container = document.getElementById('star-container');
+            const star = document.createElement('div');
+            star.className = 'shooting-star';
+
+            // Start position: Random Y on the left side, off-screen
+            const startY = Math.random() * (window.innerHeight * 0.6);
+            star.style.top = `${startY}px`;
+            star.style.left = '-100px'; 
+            // Rotate for diagonal movement across screen (approx -35deg angle)
+            star.style.transform = 'rotate(-35deg)';
+
+            container.appendChild(star);
+
+            // End position: Bottom right, far off-screen
+            const endX = window.innerWidth + 500;
+            const endY = startY + 600;
+
+            // Animate streak
+            gsap.to(star, {
+                x: endX,
+                y: endY,
+                opacity: 1, // Quickly become visible then fade later
+                duration: Math.random() * 1.5 + 1, // Speed between 1s and 2.5s
+                ease: "power1.in",
+                onStart: () => {
+                     // Fade in quickly
+                     gsap.to(star, { opacity: 1, duration: 0.2 });
+                },
+                onUpdate: function() {
+                    // Fade out near the end of travel
+                    if(this.progress() > 0.7) {
+                         gsap.to(star, { opacity: 0, duration: 0.3 });
+                    }
+                },
+                onComplete: () => { 
+                    star.remove(); // Clean up DOM
+                }
+            });
+
+            // Schedule the next one randomly between 4 and 10 seconds
+            setTimeout(spawnShootingStar, Math.random() * 6000 + 4000);
+        }
+
 
         // --- MUSIC CONTROL ---
         let musicPlaying = false;
@@ -360,14 +385,12 @@
 
         // --- NAVIGATION ---
         function nextScreen(id) {
-            // Play music on first interaction if not playing
             if(id === 2 && !musicPlaying) toggleMusic();
 
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const next = document.getElementById(`screen-${id}`);
             next.classList.add('active');
 
-            // Trigger animations based on screen
             if(id === 2) {
                 gsap.from("#wish-text", { scale: 0.5, opacity: 0, duration: 1.5, ease: "elastic.out(1, 0.3)" });
             }
@@ -379,29 +402,21 @@
         function initPhotoStack() {
             const container = document.getElementById('photo-stack');
             container.innerHTML = '';
-            
-            // Reverse so first item is on top in DOM order for z-index simplicity
             [...photos].reverse().forEach((photo, i) => {
                 const card = document.createElement('div');
                 card.className = 'photo-card';
                 card.style.backgroundImage = `url(${photo.src})`;
                 card.style.zIndex = i;
-                // Add random slight rotation for messy stack look
-                card.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
-                
+                card.style.transform = `rotate(${Math.random() * 8 - 4}deg)`; // Less rotation for neat stack
                 card.innerHTML = `<div class="photo-caption">${photo.caption}</div>`;
                 
                 card.onclick = () => {
-                    // Fly away animation
                     gsap.to(card, { 
-                        x: 200, 
-                        rotation: 40, 
-                        opacity: 0, 
-                        duration: 0.5, 
+                        x: 250, rotation: 30, opacity: 0, duration: 0.5, ease: "back.in(1)",
                         onComplete: () => {
-                            container.prepend(card); // Move to back
-                            gsap.set(card, { x: 0, opacity: 1, rotation: Math.random() * 10 - 5, scale: 0.9 });
-                            gsap.to(card, { scale: 1, duration: 0.3, delay: 0.1 }); // Pop back in at back
+                            container.prepend(card);
+                            gsap.set(card, { x: 0, opacity: 1, rotation: Math.random() * 8 - 4, scale: 0.9 });
+                            gsap.to(card, { scale: 1, duration: 0.3 });
                         }
                     });
                 };
@@ -417,7 +432,7 @@
             reasons.forEach((text, i) => {
                 const div = document.createElement('div');
                 div.className = `reason-card ${i === 0 ? 'current' : 'next'}`;
-                div.innerHTML = `<h1 class="text-4xl mb-2">💖</h1><p class="font-serif text-lg">${text}</p>`;
+                div.innerHTML = `<h1 class="text-4xl mb-2 filter drop-shadow">🌟</h1><p class="font-serif text-lg">${text}</p>`;
                 container.appendChild(div);
             });
         }
@@ -426,22 +441,20 @@
             const cards = document.querySelectorAll('.reason-card');
             const total = cards.length;
             
-            // Current flies out
             gsap.to(cards[currentReason], { 
-                y: -50, opacity: 0, scale: 0.8, duration: 0.4,
+                y: -60, opacity: 0, scale: 0.8, duration: 0.4, ease: "back.in(1)",
                 onComplete: function() {
                     this.targets()[0].className = 'reason-card next';
-                    gsap.set(this.targets()[0], { y: 0 }); // Reset pos
+                    gsap.set(this.targets()[0], { y: 0 });
                 }
             });
 
-            // Next comes in
             currentReason = (currentReason + 1) % total;
             const nextCard = cards[currentReason];
             
             gsap.fromTo(nextCard, 
-                { opacity: 0, scale: 0.9, y: 50 },
-                { opacity: 1, scale: 1, y: 0, duration: 0.5, delay: 0.1, className: 'reason-card current' }
+                { opacity: 0, scale: 0.9, y: 60 },
+                { opacity: 1, scale: 1, y: 0, duration: 0.6, delay: 0.2, ease: "back.out(1.2)", className: 'reason-card current' }
             );
         }
 
@@ -449,7 +462,6 @@
         function openLetter() {
             const container = document.querySelector('.envelope-container');
             container.classList.add('open');
-            
             setTimeout(() => {
                 document.getElementById('full-letter').classList.add('visible');
             }, 800);
@@ -460,31 +472,10 @@
             document.querySelector('.envelope-container').classList.remove('open');
         }
 
-        // --- PARTICLE BACKGROUND ---
-        function createParticles() {
-            const container = document.getElementById('particle-container');
-            for(let i=0; i<20; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                const size = Math.random() * 5 + 2;
-                p.style.width = size + 'px';
-                p.style.height = size + 'px';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.top = Math.random() * 100 + 'vh';
-                p.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                container.appendChild(p);
-
-                gsap.to(p, {
-                    y: -100,
-                    x: Math.random() * 50 - 25,
-                    duration: Math.random() * 10 + 5,
-                    repeat: -1,
-                    ease: "none"
-                });
-            }
-        }
-        createParticles();
+        // Initialize the night sky on load
+        createNightSky();
+        // Start shooting star cycle after a brief delay
+        setTimeout(spawnShootingStar, 2000);
 
     </script>
 </body>
